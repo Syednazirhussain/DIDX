@@ -1,0 +1,134 @@
+        //protected string select(string tablename,string[] param = null ,string[] whereClauesParams = null,string[] paramArray = null)
+        //{
+        //    string querey = "select ";
+        //    int size = 0;
+
+        //    if (param == null && whereClauesParams == null)
+        //    {
+        //        querey += "* from " + tablename;
+        //    }
+        //    else if (param != null && whereClauesParams == null)
+        //    {
+        //        size = param.Length;
+        //        for (int i = 0; i < param.Length; i++)
+        //        {
+        //            if(size - i == 1)
+        //            {
+        //                querey += param[i];
+        //            }
+        //            else
+        //            {
+        //                querey += param[i] + ",";
+        //            }
+        //        }
+        //        querey += " from " + tablename;
+        //    }
+        //    else if (param == null && whereClauesParams != null && paramArray != null)
+        //    {
+        //        size = 0;
+        //        querey += "* from " + tablename + " where ";
+        //        if(whereClauesParams.Length == paramArray.Length)
+        //        {
+        //            size = whereClauesParams.Length;
+        //            for (int i = 0; i < whereClauesParams.Length; i++)
+        //            {
+        //                if(size - i == 1)
+        //                {
+        //                    querey += whereClauesParams[i] + " = " + paramArray[i];
+        //                }
+        //                else
+        //                {
+        //                    querey += whereClauesParams[i] + " = " + paramArray[i]+" and ";
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            this.response.Add("querey error", "params count mis match");
+        //        }
+        //    }
+        //    else if (param != null && whereClauesParams != null && paramArray != null)
+        //    {
+        //        size = param.Length;
+        //        for (int i = 0; i < param.Length; i++)
+        //        {
+        //            if (size - i == 1)
+        //            {
+        //                querey += param[i];
+        //            }
+        //            else
+        //            {
+        //                querey += param[i] + ",";
+        //            }
+        //        }
+        //        querey += " from " + tablename + " where ";
+        //        size = 0;
+        //        size = whereClauesParams.Length;
+        //        if (whereClauesParams.Length == paramArray.Length)
+        //        {
+        //            for (int i = 0; i < whereClauesParams.Length; i++)
+        //            {
+        //                if(size - i == 1)
+        //                {
+        //                    querey += whereClauesParams[i] + " = " + paramArray[i];
+        //                }
+        //                else
+        //                {
+        //                    querey += whereClauesParams[i] + " = " + paramArray[i]+" and ";
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            this.response.Add("querey error", "params count mis match");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        querey = "";
+        //        querey = "Inavlid parameter pass";
+        //    }
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.Connection = this.con;
+        //    cmd.CommandText = querey;
+        //    try
+        //    {
+        //        this.con.Open();
+        //        SqlDataReader dr = cmd.ExecuteReader();
+        //        DataTable t1 = new DataTable();
+        //        if (dr.HasRows)
+        //        {
+        //            t1.Load(dr);
+        //            if (t1.Rows.Count >= 1)
+        //            {
+        //                this.response.Add("status", "success");
+        //                this.response.Add("rowsAffected", t1.Rows.Count.ToString());
+        //                this.response.Add("result", this.DataTableToJSONWithStringBuilder(t1));
+        //                return JsonConvert.SerializeObject(this.response, Formatting.Indented);
+        //            }
+
+        //        }
+        //        else
+        //        {
+        //            this.response.Add("status", "success");
+        //            this.response.Add("rowsAffected", t1.Rows.Count.ToString());
+        //            this.response.Add("result", "");
+        //            return JsonConvert.SerializeObject(this.response, Formatting.Indented);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        this.response.Add("status", "failed");
+        //        this.response.Add("rowsAffected", "0");
+        //        this.response.Add("result", String.Format("{0}", ex.Message));
+        //        return JsonConvert.SerializeObject(this.response, Formatting.Indented);
+
+        //    }
+        //    finally
+        //    {
+        //        this.con.Close();
+        //    }
+
+        //    return null;
+        //}

@@ -1,0 +1,65 @@
+﻿@{
+    ViewBag.Title = "Register";
+}
+
+<h2>@ViewBag.Title.</h2>
+<form class="form-horizontal" id="register">
+    
+    <h4>Create a new account.</h4>
+    <hr />
+    <div class="form-group">
+        <label class="col-md-2 control-label">User Name</label>
+        <div class="col-md-10">
+            <input type="text" name="username" class="form-control"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">Email</label>
+        <div class="col-md-10">
+            <input type="email" name="email" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">Password</label>
+        <div class="col-md-10">
+            <input type="password" name="password" class="form-control"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">Confirm Password</label>
+        <div class="col-md-10">
+            <input type="password" name="cpassword" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" class="btn btn-default" value="Register" onclick="signUp()" />
+        </div>
+    </div>
+ </form>
+
+<script type="text/javascript">
+  
+        function signUp() {
+            var data = $('#register').serialize();
+            $.ajax({
+                url: '/Home/Register',
+                type: 'POST',
+                data: data,
+                success: function (data) {
+                    $(':input', '#register')
+                         .not(':button, :submit, :reset, :hidden')
+                         .val('')
+                         .removeAttr('checked')
+                         .removeAttr('selected');
+                    $("#register").trigger('reset');
+                    document.getElementById("register").reset();
+                    console.log(data);
+                    alert(data);
+                    //alert(data.username + " " + data.email + " " + data.password + " " + data.cpassword);
+                }
+            });
+
+        }
+
+</script>

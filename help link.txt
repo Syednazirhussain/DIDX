@@ -1,0 +1,8 @@
+Delay element
+http://itsolutionstuff.com/post/how-to-hide-div-after-some-time-using-angularjsexample.html
+
+Editable Table
+http://jsfiddle.net/Thw8n/4/
+
+JS object loop through
+https://stackoverflow.com/questions/10543512/how-do-i-enumerate-through-a-jobject

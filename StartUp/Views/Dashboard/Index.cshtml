@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<section class="body-content">
+    <select class="col-lg-5 dropdown" name="company" id="select">
+        <option value="-1">Select</option>
+        <option value="Employee">Employee</option>
+        <option value="Departments">Department</option>
+    </select>
+</section>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+       
+        $("#select").change(function () {
+            var value = $("#select").val();
+            if (value == "Departments")
+            {
+                window.location.href = "/Department/Index";
+            } else if (value == "Employee")
+            {
+                window.location.href = "/Employee/Index";
+            }
+        });
+    });
+
+</script>

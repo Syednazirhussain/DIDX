@@ -1,0 +1,230 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Department</h2>
+
+
+
+
+<div ng-app="myApp" ng-controller="myCtrl">
+
+
+
+    <div class="container">
+
+        <ol class="list-group">
+            <li class="list-group-item" ng-repeat="x in deptname">
+                {{x}}&nbsp;<a href="" ng-click="remove($scope)">remove</a>
+            </li>
+        </ol>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div>
+                    <label class="col-md-2 control-label">Add Department</label>
+                    <div class="col-md-10">
+                        <input type="text" ng-model="name" placeholder="Enter department name" class="form-control" />
+                    </div>
+                </div>
+                <div>
+                    <label class="col-md-2 control-label">Search Department</label>
+                    <div class="col-md-10">
+                        <input type="text" ng-model="search" placeholder="Search department" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button class="btn btn-default" ng-click="add()">ADD</button>
+                    <button class="btn btn-success" ng-click="submit()">Update</button>
+                </div>
+            </div>
+        </form>
+
+        <p ng-hide="isCheck" class="alert-success">{{status}}</p>
+
+
+        <table class="col-md-2 table table-striped">
+            <thead>
+                <th> Department Names </th>
+                <th> Actions </th>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="x in dept | filter:search">
+                    <td>
+                        <span data-ng-hide="editMode">{{x.deptName}}</span>
+                        <input class="form-control" type="text" data-ng-show="editMode" data-ng-model="x.deptName" data-ng-required />
+                    </td>
+                    <td>
+                        <button type="button" data-ng-hide="editMode" data-ng-click="editMode = true; editAppKey(x)" class="btn btn-default">Edit</button>
+                        <button type="button" data-ng-show="editMode" data-ng-click="editMode = false; saveField(x)" class="btn btn-default">Save</button>
+                        <button type="button" data-ng-show="editMode" data-ng-click="editMode = false; cancel(x)" class="btn btn-default">Cancel</button>
+                        <button type="button"  data-ng-click="deleteDept(x.deptId)" class="btn btn-default">Delete</button>
+                    </td>
+            </tbody>
+        </table>
+
+    </div>
+
+
+
+
+</div>
+
+
+
+<script>
+
+    var array = new Array();
+    var i = 0;
+
+    var app = angular.module("myApp", []);
+
+    app.controller("myCtrl", function ($scope, $http, $timeout) {
+
+        $scope.isCheck = false;
+        $scope.deptname = array;
+
+        $scope.add = function () {
+            array[i] = $scope.name;
+            i++;
+            $scope.name = "";
+            console.log(array);
+        }
+
+        $scope.remove = function (index) {
+            array.splice(index, 1);
+            i--;
+        }
+
+        $http({
+            url: "/Department/PageRender",
+            method: "GET"
+        }).then(function (response) {
+            var array = new Array();
+            var jsObj = angular.fromJson(response);
+            var obj = angular.fromJson(jsObj["data"]["result"]);
+            array = obj;
+            $scope.dept = array;
+        });
+
+        $scope.submit = function () {
+            $scope.deptname = null;
+
+            $http({
+                method: 'POST',
+                url: '/Department/AddDepartments',
+                data: { function_param: array }
+            }).then(function (response) {
+                var jsObj = angular.fromJson(response);
+                if (jsObj["data"].status == "success" && jsObj["data"].rowsAffected >= 1) {
+                    $http({
+                        url: "/Department/PageRender",
+                        method: "GET",
+
+                    }).then(function (data) {
+                        var array = new Array();
+                        var jsObj = angular.fromJson(data);
+                        var obj = angular.fromJson(jsObj["data"]["result"]);
+                        array = obj;
+                        $scope.dept = array;
+                    });
+                }
+                $scope.status = "Status " + jsObj["data"].status + " RowsAffected " + jsObj["data"].rowsAffected;
+                $timeout(function () {
+                    $scope.isCheck = true;
+
+                }, 2000);
+            });
+        };
+
+        
+        $scope.oldField = {};
+        $scope.editing = false;
+
+        $scope.editAppKey = function (field) {
+            //alert(field.deptId + " " + field.deptName);
+            $scope.editing = $scope.dept.indexOf(field);
+            $scope.oldField = angular.copy(field);
+        };
+
+        $scope.deleteDept = function (id) {
+            var obj = {
+                'ID': id
+            };
+            $http({
+                url: "/Department/DeleteDepartment",
+                method: "POST",
+                data : obj
+            }).then(function (response) {
+                var jsObj = angular.fromJson(response);
+
+                if (jsObj["data"].status == "success" && jsObj["data"].rowsAffected == 1) {
+                    $scope.status = "Status : " + jsObj["data"].status + ", Rows affected : " + jsObj["data"].rowsAffected;
+                    $timeout(function () {
+                        $scope.isCheck = true;
+                    }, 2000);
+                    $http({
+                        url: "/Department/PageRender",
+                        method: "GET"
+                    }).then(function (response) {
+                        var array = new Array();
+                        var jsObj = angular.fromJson(response);
+                        var obj = angular.fromJson(jsObj["data"]["result"]);
+                        array = obj;
+                        $scope.dept = array;
+                    });
+                } else {
+                    alert(response);
+                }
+            });
+        };
+
+        $scope.saveField = function (field) {
+            if ($scope.editing !== false) {
+                //alert("New Values "+field.deptId + " " + field.deptName);
+                //alert("Old Values " + $scope.oldField.deptId + " " + $scope.oldField.deptName);
+                var obj = {
+                    'deptId': field.deptId,
+                    'deptName': field.deptName
+                };
+                $http({
+                    url: "/Department/UpdateDepartment",
+                    method: "POST",
+                    data : obj
+                }).then(function (response) {
+                    var jsObj = angular.fromJson(response);
+
+                    if (jsObj["data"].status == "success" && jsObj["data"].rowsAffected == 1)
+                    {
+                        $scope.status = "Status : " + jsObj["data"].status + ", Rows affected : " + jsObj["data"].rowsAffected;
+                        $timeout(function () {
+                            $scope.isCheck = true;
+
+                        },2000);
+                    }else
+                    {
+                        alert(response);
+                    }
+                });
+                $scope.dept[$scope.editing] = field;
+                $scope.editing = false;
+            }
+        };
+
+        $scope.cancel = function (field) {
+            //alert("Old Values " + $scope.oldField.deptId + " " + $scope.oldField.deptName);
+            if ($scope.editing !== false) {
+                $scope.dept[$scope.editing] = $scope.oldField;
+                $scope.editing = false;
+            }
+        };
+
+    });
+
+    
+
+</script>
+
+

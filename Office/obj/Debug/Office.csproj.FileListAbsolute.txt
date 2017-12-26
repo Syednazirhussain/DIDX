@@ -1,0 +1,6 @@
+C:\Users\Supertec\Documents\Visual Studio 2013\Projects\DIDX\Office\bin\Office.dll.config
+C:\Users\Supertec\Documents\Visual Studio 2013\Projects\DIDX\Office\bin\Office.dll
+C:\Users\Supertec\Documents\Visual Studio 2013\Projects\DIDX\Office\bin\Office.pdb
+C:\Users\Supertec\Documents\Visual Studio 2013\Projects\DIDX\Office\obj\Debug\Office.csprojResolveAssemblyReference.cache
+C:\Users\Supertec\Documents\Visual Studio 2013\Projects\DIDX\Office\obj\Debug\Office.dll
+C:\Users\Supertec\Documents\Visual Studio 2013\Projects\DIDX\Office\obj\Debug\Office.pdb

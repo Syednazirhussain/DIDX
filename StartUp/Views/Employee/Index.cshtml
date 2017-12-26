@@ -1,0 +1,190 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Employee</h2>
+
+
+<div class="container" ng-app="myApp" ng-controller="myCtrl">
+
+    <p ng-hide="isCheck" class="alert-success">{{status}}</p>
+
+    <table class="table table-striped">
+        <thead>
+            <th>Employee Name</th>
+            <th>Gender</th>
+            <th>Department ID</th>
+            <th> Actions </th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="x in employees">
+                <td>
+                    <span data-ng-hide="editMode">{{x.empName}}</span>
+                    <input class="form-control" type="text" data-ng-show="editMode" data-ng-model="x.empName" data-ng-required />
+                </td>
+                <td>
+                    <span data-ng-hide="editMode">{{x.Gender}}</span>
+
+                    <input class="form-control" type="text" data-ng-show="editMode" data-ng-model="x.Gender" data-ng-required />
+                </td>
+                <td>
+                    <span data-ng-hide="editMode">{{x.deptName}}</span>
+
+                    <select class="col-md-6 dropdown" data-ng-show="editMode" ng-model="x.deptId" data-ng-required>
+                        <option ng-repeat="y in dept" value="{{y.deptId}}">{{y.deptName}}</option>
+                    </select>
+
+                </td>
+                <td>
+                    <button type="button" data-ng-hide="editMode" data-ng-click="editMode = true; editAppKey(x)" class="btn btn-default">Edit</button>
+                    <button type="button" data-ng-show="editMode" data-ng-click="editMode = false; saveField(x)" class="btn btn-default">Save</button>
+                    <button type="button" data-ng-show="editMode" data-ng-click="editMode = false; cancel(x)" class="btn btn-default">Cancel</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</div>
+
+<script>
+
+    var app = angular.module("myApp", []);
+
+    app.controller("myCtrl", function ($scope, $http, $timeout) {
+
+        
+        $http({
+            url: "/Employee/PageRender",
+            method: "GET"
+        }).then(function (response) {
+            var array = new Array();
+            var jsObj = angular.fromJson(response);
+            var obj = angular.fromJson(jsObj["data"]["result"]);
+            array = obj;
+            $scope.employees = array;
+        });
+
+
+        $scope.oldField = {};
+        $scope.editing = false;
+
+        $scope.isCheck = false;
+
+        $scope.editAppKey = function (field) {
+
+            $http({
+                url: "/Department/PageRender",
+                method: "GET"
+            }).then(function (response) {
+                var array = new Array();
+                var jsObj = angular.fromJson(response);
+                var obj = angular.fromJson(jsObj["data"]["result"]);
+                array = obj;
+                $scope.dept = array;
+            });
+            $scope.editing = $scope.employees.indexOf(field);
+            $scope.oldField = angular.copy(field);
+
+        };
+
+        $scope.deleteDept = function (id) {
+            alert(id);
+            //var obj = {
+            //    'ID': id
+            //};
+            //$http({
+            //    url: "/Department/DeleteDepartment",
+            //    method: "POST",
+            //    data: obj
+            //}).then(function (response) {
+            //    var jsObj = angular.fromJson(response);
+
+            //    if (jsObj["data"].status == "success" && jsObj["data"].rowsAffected == 1) {
+            //        $scope.status = "Status : " + jsObj["data"].status + ", Rows affected : " + jsObj["data"].rowsAffected;
+            //        $timeout(function () {
+            //            $scope.isCheck = true;
+            //        }, 2000);
+            //        $http({
+            //            url: "/Department/PageRender",
+            //            method: "GET"
+            //        }).then(function (response) {
+            //            var array = new Array();
+            //            var jsObj = angular.fromJson(response);
+            //            var obj = angular.fromJson(jsObj["data"]["result"]);
+            //            array = obj;
+            //            $scope.dept = array;
+            //        });
+            //    } else {
+            //        alert(response);
+            //    }
+            //});
+        };
+
+
+        $scope.saveField = function (field) {
+          
+            if ($scope.editing !== false) {
+               
+                //alert("New Values "+field.empId + " " + field.empName+" "+field.Gender+" "+field.deptId);
+                //alert("Old Values " + $scope.oldField.empId + " " + $scope.oldField.empName + " " + $scope.oldField.Gender + " " + $scope.oldField.deptId);
+
+                var obj = {
+                    'empId': field.empId,
+                    'empName': field.empName,
+                    'Gender': field.Gender,
+                    'Departmentid' : field.deptId
+                };
+                $http({
+
+                    url: "/Employee/UpdateEmployee",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: {"json" : JSON.stringify(obj)},
+                }).then(function (response) {
+
+                    var jsObj = angular.fromJson(response);
+                    if (jsObj["data"].status == "success" && jsObj["data"].rowsAffected == 1) {
+
+                        $scope.status = "Status : " + jsObj["data"].status + ", Rows affected : " + jsObj["data"].rowsAffected;
+
+                        $http({
+                            url: "/Employee/PageRender",
+                            method: "GET"
+                        }).then(function (response) {
+                            var array = new Array();
+                            var jsObj = angular.fromJson(response);
+                            var obj = angular.fromJson(jsObj["data"]["result"]);
+                            array = obj;
+                            $scope.employees = array;
+                        });
+
+                        $timeout(function () {
+                            $scope.isCheck = true;
+                        }, 2000);
+
+                    } else {
+                        alert(response);
+                    }
+                });
+                $scope.dept[$scope.editing] = field;
+                $scope.editing = false;
+            }
+        };
+
+        $scope.cancel = function (field) {
+            //alert("Old Values " + $scope.oldField.empId + " " + $scope.oldField.empName+" "+$scope.oldField.Gender);
+            if ($scope.editing !== false) {
+                $scope.employees[$scope.editing] = $scope.oldField;
+                $scope.editing = false;
+            }
+        };
+
+    });
+
+</script>
+
+
+
+
